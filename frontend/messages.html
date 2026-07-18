@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聯絡私訊 | 綠色循環經濟護照</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .chat-container {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 1.5rem;
+            height: calc(100vh - 160px);
+            min-height: 500px;
+            margin-top: 1.5rem;
+        }
+
+        /* 左側對話清單 */
+        .chat-sidebar {
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border-color);
+            padding-right: 1rem;
+            overflow-y: auto;
+        }
+
+        .chat-session-item {
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid transparent;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .chat-session-item:hover {
+            background: rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .chat-session-item.active {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--primary);
+        }
+
+        /* 右側對話框 */
+        .chat-main {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .chat-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .chat-history {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+        }
+
+        /* 對話泡泡樣式 */
+        .msg-bubble {
+            max-width: 70%;
+            padding: 0.85rem 1.1rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.45;
+            word-wrap: break-word;
+        }
+
+        .msg-bubble.self {
+            align-self: flex-end;
+            background: var(--primary);
+            color: #ffffff;
+            border-bottom-right-radius: 2px;
+        }
+
+        .msg-bubble.other {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-main);
+            border-bottom-left-radius: 2px;
+            border: 1px solid var(--border-color);
+        }
+
+        .msg-meta {
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            opacity: 0.75;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .msg-input-area {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            .chat-sidebar {
+                border-right: none;
+                padding-right: 0;
+                max-height: 200px;
+                border-bottom: 1px solid var(--border-color);
+                margin-bottom: 1rem;
+                padding-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='passport.html'">
+                🌱 綠色循環經濟護照
+            </div>
+            <ul class="nav-links">
+                <li><a href="passport.html">物品收藏庫</a></li>
+                <li><a href="add-item.html">新增物品護照</a></li>
+                <li><a href="reminders.html">提醒通知</a></li>
+                <li><a href="board.html">互助募集看板</a></li>
+                <li><a href="messages.html" class="active">聯絡私訊</a></li>
+                <li><button class="btn-logout" onclick="logout()">登出</button></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <h2 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 0.25rem; color: var(--text-main);">聯絡與私訊中心</h2>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">與周邊鄰里居民溝通募集零件、二手交易面交的時間與細節。</p>
+
+        <div class="glass-card chat-container">
+            <!-- 左側對話清單 -->
+            <div class="chat-sidebar" id="sessionsList">
+                <div style="text-align: center; color: var(--text-muted); padding: 2rem;">載入中...</div>
+            </div>
+
+            <!-- 右側對話視窗 -->
+            <div class="chat-main">
+                <div class="chat-header" id="chatHeader">
+                    💬 選擇聯絡人開始對話
+                </div>
+                <div class="chat-history" id="chatHistory">
+                    <div style="margin: auto; color: var(--text-muted); text-align: center;">
+                        <span style="font-size: 3rem; display: block; margin-bottom: 1rem;">📬</span>
+                        請點擊左側對話列表，或在社區看板中點擊「私訊聯絡發文者」以開啟聊天室。
+                    </div>
+                </div>
+                <div class="msg-input-area" style="display: none;" id="msgInputArea">
+                    <input type="text" id="msgContent" placeholder="輸入訊息..." class="form-control" onkeydown="if(event.key === 'Enter') sendMessage()">
+                    <button class="btn-primary" onclick="sendMessage()" style="white-space: nowrap;">發送訊息</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/main.js?v=2026071818"></script>
+    <script>
+        let currentChatUserId = null;
+        let currentPostId = null;
+        let pollingTimer = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            checkAuth();
+            
+            // 從網址讀取是否有跳轉過來的私訊對象
+            const urlParams = new URLSearchParams(window.location.search);
+            const chatWith = urlParams.get('chat_with');
+            const postId = urlParams.get('post_id');
+            
+            if (chatWith) {
+                currentChatUserId = parseInt(chatWith);
+                currentPostId = postId ? parseInt(postId) : null;
+            }
+
+            await loadSessions();
+            
+            if (currentChatUserId) {
+                // 自動開啟與該用戶的歷史對話
+                openChat(currentChatUserId, currentPostId);
+            }
+
+            // 開始定時輪詢訊息 (每 3 秒)
+            pollingTimer = setInterval(() => {
+                if (currentChatUserId) {
+                    loadHistory(currentChatUserId, currentPostId, true); // 靜默更新歷史
+                }
+                loadSessions(true); // 靜默更新清單
+            }, 3000);
+        });
+
+        // 載入對話清單
+        async function loadSessions(silent = false) {
+            const listEl = document.getElementById('sessionsList');
+            try {
+                const sessions = await apiRequest('/messages/sessions');
+                
+                // 如果是靜默重新載入，且對話清單長度沒有變化，可避免全部重繪影響滑動
+                let html = '';
+                if (sessions.length === 0) {
+                    html = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">目前沒有任何對話歷史。</div>`;
+                } else {
+                    sessions.forEach(s => {
+                        const isActive = currentChatUserId === s.other_user_id && currentPostId === s.post_id;
+                        html += `
+                            <div class="chat-session-item ${isActive ? 'active' : ''}" onclick="openChat(${s.other_user_id}, ${s.post_id})">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                                    <strong style="color: var(--text-main); font-size: 0.95rem;">👤 ${s.other_username}</strong>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted);">${formatTime(s.last_message_time)}</span>
+                                </div>
+                                <div style="font-size: 0.8rem; color: var(--primary); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 0.25rem;">
+                                    📌 貼文: ${s.post_title}
+                                </div>
+                                <div style="font-size: 0.85rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                    ${s.last_message}
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                listEl.innerHTML = html;
+            } catch (err) {
+                if (!silent) listEl.innerHTML = `<div style="color: #ef4444; text-align: center; padding: 1rem;">載入對話失敗</div>`;
+            }
+        }
+
+        // 開啟聊天室
+        async function openChat(otherUserId, postId) {
+            currentChatUserId = otherUserId;
+            currentPostId = postId;
+
+            // 切換對話清單的選取效果
+            const items = document.querySelectorAll('.chat-session-item');
+            items.forEach(it => it.classList.remove('active'));
+
+            // 顯示輸入框
+            document.getElementById('msgInputArea').style.display = 'flex';
+
+            // 載入歷史訊息與標題
+            await loadHistory(otherUserId, postId, false);
+            
+            // 重新刷新清單以標記作用中對話
+            loadSessions(true);
+        }
+
+        // 載入與渲染對話歷史
+        async function loadHistory(otherUserId, postId, silent = false) {
+            const headerEl = document.getElementById('chatHeader');
+            const historyEl = document.getElementById('chatHistory');
+            
+            try {
+                let url = `/messages/history?other_user_id=${otherUserId}`;
+                if (postId) {
+                    url += `&post_id=${postId}`;
+                }
+                const history = await apiRequest(url);
+
+                // 更新標題
+                let sessionTitle = `👤 聯絡對象`;
+                if (history.length > 0) {
+                    const firstMsg = history[0];
+                    const otherName = firstMsg.sender_id === otherUserId ? firstMsg.sender_username : firstMsg.recipient_username;
+                    sessionTitle = `💬 與 ${otherName} 對話中`;
+                    if (firstMsg.post_title) {
+                        sessionTitle += ` <span style="font-size:0.85rem; color:var(--text-muted);"> (關於貼文: ${firstMsg.post_title})</span>`;
+                    }
+                } else {
+                    // 若尚無歷史（全新發起的私訊）
+                    sessionTitle = `💬 開啟新對話`;
+                }
+                headerEl.innerHTML = sessionTitle;
+
+                // 渲染訊息
+                let html = '';
+                if (history.length === 0) {
+                    html = `<div style="margin: auto; color: var(--text-muted); text-align: center;">您們尚未有任何訊息，發送第一條訊息開始對話吧！</div>`;
+                } else {
+                    history.forEach(m => {
+                        const isSelf = m.sender_id !== otherUserId;
+                        html += `
+                            <div class="msg-bubble ${isSelf ? 'self' : 'other'}">
+                                <div>${m.content}</div>
+                                <div class="msg-meta">
+                                    <span>${isSelf ? '您' : m.sender_username}</span>
+                                    <span>${formatTime(m.created_at)}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                
+                // 為了保留滾動體驗：若是靜默輪詢且使用者滾動到最上方時不強迫跳到底部
+                const isAtBottom = historyEl.scrollHeight - historyEl.scrollTop <= historyEl.clientHeight + 40;
+                historyEl.innerHTML = html;
+                
+                if (!silent || isAtBottom) {
+                    historyEl.scrollTop = historyEl.scrollHeight;
+                }
+            } catch (err) {
+                if (!silent) historyEl.innerHTML = `<div style="color: #ef4444; padding: 2rem; text-align: center;">讀取聊天紀錄失敗</div>`;
+            }
+        }
+
+        // 發送訊息
+        async function sendMessage() {
+            const input = document.getElementById('msgContent');
+            const content = input.value.trim();
+            if (!content || !currentChatUserId) return;
+
+            try {
+                await apiRequest('/messages', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        recipient_id: currentChatUserId,
+                        post_id: currentPostId,
+                        content: content
+                    })
+                });
+                input.value = '';
+                // 立即更新歷史並滾動到底部
+                await loadHistory(currentChatUserId, currentPostId, false);
+                loadSessions(true);
+            } catch (err) {
+                alert('訊息發送失敗：' + err.message);
+            }
+        }
+
+        // 輔助函式：時間格式化
+        function formatTime(isoString) {
+            if (!isoString) return '';
+            const d = new Date(isoString);
+            const pad = (n) => n.toString().padStart(2, '0');
+            return `${d.getMonth()+1}/${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        }
+    </script>
+</body>
+</html>

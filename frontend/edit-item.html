@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>修改物品護照 | 綠色循環經濟護照</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* 桌面端一排 3 個的表單排版 */
+        .grid-form {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        @media (max-width: 900px) {
+            .grid-form {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 600px) {
+            .grid-form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='passport.html'">
+                🌱 綠色循環經濟護照
+            </div>
+            <ul class="nav-links">
+                <li><a href="passport.html">物品收藏庫</a></li>
+                <li><a href="add-item.html">新增物品護照</a></li>
+                <li><a href="reminders.html">提醒通知</a></li>
+                <li><a href="board.html">互助募集看板</a></li>
+                <li><a href="messages.html">聯絡私訊</a></li>
+                <li><button class="btn-logout" onclick="logout()">登出</button></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <!-- 物品編輯區 -->
+        <section class="glass-card" style="margin-top: 2rem;">
+            <h3 style="margin-bottom: 1.5rem; font-size: 1.3rem; font-weight: 600; color: var(--text-main);" id="editTitle">修改物品護照</h3>
+            <form id="editForm">
+                <input type="hidden" id="editItemId">
+                <div class="grid-form">
+                    <div class="form-group">
+                        <label for="itemCategory">物品類型</label>
+                        <select id="itemCategory" class="form-control" onchange="onCategoryChange()">
+                            <option value="hardware_furniture" selected>硬體家具類</option>
+                            <option value="consumables">消耗品類</option>
+                            <option value="food">食物</option>
+                            <option value="cosmetics">保養品</option>
+                            <option value="wearables_decor">穿戴與裝飾</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemName">物品名稱</label>
+                        <input type="text" id="itemName" class="form-control" placeholder="例如：電腦椅 / 蘋果 / 乳液">
+                    </div>
+                    <div class="form-group" id="itemMaterialGroup">
+                        <label for="itemMaterial">物品材質</label>
+                        <input type="text" id="itemMaterial" class="form-control" placeholder="例如：木質 / 鋼鐵 / 棉質">
+                    </div>
+                    <div class="form-group">
+                        <label for="itemPurchaseDate">購買日期</label>
+                        <input type="date" id="itemPurchaseDate" class="form-control">
+                    </div>
+                    <div class="form-group" id="itemExpiryGroup">
+                        <label for="itemExpiryDate" id="itemExpiryLabel">到期日期</label>
+                        <input type="date" id="itemExpiryDate" class="form-control">
+                    </div>
+                    <div class="form-group" id="itemIntervalGroup">
+                        <label for="itemInterval">定期保養/清洗週期 (天數)<span id="itemIntervalHint" style="font-size: 0.8rem; color: #f59e0b; margin-left: 0.5rem; font-weight: 500;"></span></label>
+                        <input type="number" id="itemInterval" class="form-control" min="1" placeholder="請輸入天數">
+                    </div>
+                    <div class="form-group" style="grid-column: span 1;">
+                        <label for="itemImage">更換物品相片 (小於 500KB，可不選)</label>
+                        <input type="file" id="itemImage" class="form-control" accept="image/*">
+                    </div>
+                </div>
+                <div id="itemError" style="color: #ef4444; font-size: 0.85rem; margin-top: 1rem; display: none;"></div>
+                
+                <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; display: flex; gap: 1rem;">
+                    <button type="submit" class="btn-primary" style="width: auto; padding: 0.5rem 1.5rem;">儲存修改</button>
+                    <button type="button" class="btn-primary" style="width: auto; padding: 0.5rem 1.5rem; background: var(--secondary);" onclick="window.location.href='passport.html'">取消</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script src="js/main.js?v=2026071816"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            loadEditPage(); // 加載單一物品編輯資料
+        });
+    </script>
+</body>
+</html>

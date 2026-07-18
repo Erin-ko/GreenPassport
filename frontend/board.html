@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互助募集看板 | 綠色循環經濟護照</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='passport.html'">
+                🌱 綠色循環經濟護照
+            </div>
+            <ul class="nav-links">
+                <li><a href="passport.html">物品收藏庫</a></li>
+                <li><a href="add-item.html">新增物品護照</a></li>
+                <li><a href="reminders.html">提醒通知</a></li>
+                <li><a href="board.html" class="active">互助募集看板</a></li>
+                <li><a href="messages.html">聯絡私訊</a></li>
+                <li><button class="btn-logout" onclick="logout()">登出</button></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <div class="board-header">
+            <div>
+                <h2 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 0.25rem; color: var(--text-main);">鄰里零件微型募集看板</h2>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">找尋周邊閒置的單個零件，避免為了一次使用而購買整包造成二次浪費。</p>
+            </div>
+            <button class="btn-primary" onclick="openModal('postModal')">📢 發布募集與交易</button>
+        </div>
+
+        <!-- 工具列：關鍵字搜尋、類別篩選與排序 -->
+        <div class="glass-card" style="margin-bottom: 2rem; padding: 1.25rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+            <div style="flex: 1.5; min-width: 250px;">
+                <input type="text" id="boardSearch" placeholder="搜尋募集標題、內容或類別..." class="form-control" style="font-size: 0.9rem; padding: 0.5rem 1rem;" oninput="renderBoardItems()">
+            </div>
+            <div style="display: flex; gap: 0.75rem; flex: 1.2; min-width: 280px; justify-content: flex-end;">
+                <select id="boardFilterType" class="form-control" style="font-size: 0.9rem; padding: 0.5rem;" onchange="onBoardFilterChange()">
+                    <option value="all" selected>全部公告類型</option>
+                    <option value="Request">微型募集</option>
+                    <option value="Trade">二手交易與贈送</option>
+                </select>
+                <select id="boardSortOption" class="form-control" style="font-size: 0.9rem; padding: 0.5rem;" onchange="renderBoardItems()">
+                    <option value="dist_asc" selected>距離優先</option>
+                    <option value="time_desc">最新發布</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 貼文清單 -->
+        <section id="postsContainer">
+            <div style="text-align: center; padding: 4rem; color: var(--text-muted);">
+                正在找尋您周邊的募集貼文...
+            </div>
+        </section>
+    </main>
+
+    <!-- 發文 Modal -->
+    <div class="modal" id="postModal">
+        <div class="modal-content" style="max-width: 550px;">
+            <div class="modal-header">
+                <div class="modal-title" style="color: var(--text-main)" id="postModalTitle">📢 建立微型零件募集貼文</div>
+                <button class="btn-close" onclick="closeModal('postModal')">&times;</button>
+            </div>
+            <form id="postForm">
+                <div class="form-group">
+                    <label for="postTradingType">公告類型</label>
+                    <select id="postTradingType" class="form-control" onchange="onPostTradingTypeChange()" required>
+                        <option value="Request" selected>微型募集</option>
+                        <option value="Trade">二手交易與贈送</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="postTitle" id="postTitleLabel">募集標題</label>
+                    <input type="text" id="postTitle" class="form-control" placeholder="例如：徵求一個 M6 規格的螺絲" required>
+                </div>
+                <div class="form-group">
+                    <label for="postType">零件/物品類別</label>
+                    <input type="text" id="postType" class="form-control" placeholder="例如：螺絲 / 木栓 / 砂紙" required>
+                </div>
+                
+                <!-- 二手交易專屬額外屬性 -->
+                <div id="postConditionGroup" style="display: none; background: rgba(16, 185, 129, 0.05); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label for="postCondition">價格或交換條件描述</label>
+                        <input type="text" id="postCondition" class="form-control" placeholder="例如：150元 / 免費贈送 / 交換零件">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="postPrice">二手售價金額 (NTD) 💰</label>
+                            <input type="number" id="postPrice" class="form-control" placeholder="數字，免費填 0" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="postItemHealth">物品健康度 (%)</label>
+                            <input type="number" id="postItemHealth" class="form-control" placeholder="1~100" min="1" max="100" value="90">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="postItemMaterial">物品主要材質 (估算碳排用)</label>
+                        <input type="text" id="postItemMaterial" class="form-control" placeholder="例如：木質 / 鋼鐵 / 塑膠">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="postImage">物品相片 (小於 500KB，可不選)</label>
+                    <input type="file" id="postImage" class="form-control" accept="image/*">
+                </div>
+
+                <div class="form-group">
+                    <label for="postContent" id="postContentLabel">募集說明與規格</label>
+                    <textarea id="postContent" class="form-control" rows="4" placeholder="請詳細說明您需要的零件規格，方便鄰居幫忙對照檢查。" required></textarea>
+                </div>
+                <div id="postError" style="color: #ef4444; font-size: 0.85rem; margin-bottom: 1rem; display: none;"></div>
+                <button type="submit" class="btn-primary" style="width: 100%;">發布公告</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/main.js?v=2026071818"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            loadPosts();
+        });
+    </script>
+</body>
+</html>

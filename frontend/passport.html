@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>物品收藏庫 | 綠色循環經濟護照</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='passport.html'">
+                🌱 綠色循環經濟護照
+            </div>
+            <ul class="nav-links">
+                <li><a href="passport.html" class="active">物品收藏庫</a></li>
+                <li><a href="add-item.html">新增物品護照</a></li>
+                <li><a href="reminders.html">提醒通知</a></li>
+                <li><a href="board.html">互助募集看板</a></li>
+                <li><a href="messages.html">聯絡私訊</a></li>
+                <li><button class="btn-logout" onclick="logout()">登出</button></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <!-- 🌱 ESG 綠色永續儀表板 -->
+        <section style="margin-top: 2rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                <div class="glass-card esg-dashboard-card" style="padding: 1.25rem; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer;" onclick="showESGDetail('points')">
+                    <span style="font-size: 1.8rem; margin-bottom: 0.5rem;">🌱</span>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">綠色永續積分</div>
+                    <div style="font-size: 1.6rem; font-weight: 700; color: var(--accent); margin-top: 0.25rem;" id="esgPoints">0</div>
+                </div>
+                <div class="glass-card esg-dashboard-card" style="padding: 1.25rem; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer;" onclick="showESGDetail('carbon')">
+                    <span style="font-size: 1.8rem; margin-bottom: 0.5rem;">💨</span>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">累計減碳效益</div>
+                    <div style="font-size: 1.6rem; font-weight: 700; color: var(--primary); margin-top: 0.25rem;" id="esgCarbon">0.0 kg</div>
+                </div>
+                <div class="glass-card esg-dashboard-card" style="padding: 1.25rem; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer;" onclick="showESGDetail('posts')">
+                    <span style="font-size: 1.8rem; margin-bottom: 0.5rem;">📢</span>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">交易與募集歷史</div>
+                    <div style="font-size: 1.6rem; font-weight: 700; color: var(--text-main); margin-top: 0.25rem;" id="esgPostsCount">0</div>
+                </div>
+                <div class="glass-card esg-dashboard-card" style="padding: 1.25rem; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer;" onclick="showESGDetail('circular')">
+                    <span style="font-size: 1.8rem; margin-bottom: 0.5rem;">♻️</span>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">循環處理件數</div>
+                    <div style="font-size: 1.6rem; font-weight: 700; color: var(--text-main); margin-top: 0.25rem;" id="esgCircularCount">0</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 收藏庫清單 -->
+        <section>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 1.5rem; border-bottom: 2px solid var(--primary); padding-bottom: 0.75rem;">
+                <h2 style="font-size: 1.6rem; font-weight: 700; margin: 0; color: var(--text-main);">📦 我的物品護照收藏庫</h2>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem;">
+                    <!-- 分類過濾 -->
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <label for="filterCategory" style="font-size: 0.85rem; color: var(--text-muted);">分類：</label>
+                        <select id="filterCategory" class="form-control" style="width: 150px; padding: 0.25rem 0.5rem; font-size: 0.85rem;" onchange="renderFilteredItems()">
+                            <option value="all">全部</option>
+                            <option value="hardware_furniture">硬體家具類</option>
+                            <option value="consumables">消耗品類</option>
+                            <option value="food">食物</option>
+                            <option value="cosmetics">保養品</option>
+                            <option value="wearables_decor">穿戴與裝飾</option>
+                        </select>
+                    </div>
+                    <!-- 排序選擇 -->
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <label for="sortOption" style="font-size: 0.85rem; color: var(--text-muted);">排序：</label>
+                        <select id="sortOption" class="form-control" style="width: 170px; padding: 0.25rem 0.5rem; font-size: 0.85rem;" onchange="renderFilteredItems()">
+                            <option value="date_desc">建立時間 (新 ➔ 舊)</option>
+                            <option value="date_asc">建立時間 (舊 ➔ 新)</option>
+                            <option value="expiry_asc">即期優先 (到期日)</option>
+                            <option value="health_good">物品健康度 (良好優先)</option>
+                            <option value="health_poor">物品健康度 (不良優先)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="items-grid" id="itemsGrid">
+                <!-- 由 JS 動態生成項目 -->
+                <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);">
+                    資料載入中...
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ESG 永續明細 Modal -->
+    <div class="modal" id="esgDetailModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <div class="modal-title" id="esgDetailTitle" style="color: var(--primary);">🌱 綠色永續明細</div>
+                <button class="btn-close" onclick="closeModal('esgDetailModal')">&times;</button>
+            </div>
+            <div style="max-height: 400px; overflow-y: auto; margin-bottom: 1.5rem;" id="esgDetailBody">
+                <!-- 內容動態寫入 -->
+            </div>
+            <button class="btn-primary" style="width: 100%;" onclick="closeModal('esgDetailModal')">關閉</button>
+        </div>
+    </div>
+
+    <!-- 處置選項 Modal -->
+    <div class="modal" id="decommissionModal">
+        <div class="modal-content" style="max-width: 480px;">
+            <div class="modal-header">
+                <div class="modal-title" style="color: var(--primary);">🌱 選擇綠色循環處置方式</div>
+                <button class="btn-close" onclick="closeModal('decommissionModal')">&times;</button>
+            </div>
+            <div style="font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem; color: var(--text-main);">
+                您即將註銷物品：<strong id="decommissionItemName"></strong>。請選擇該物品最終的生命週期處置方式，系統將為您核算對應的綠色永續積分與減碳效益：
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem;">
+                <button class="btn-primary" style="text-align: left; padding: 0.85rem 1.25rem; display: flex; justify-content: space-between; align-items: center;" onclick="submitDecommission('Donated')">
+                    <span>🎁 轉贈他人 / 活化捐贈</span>
+                    <span style="font-size: 0.85rem; background: rgba(255,255,255,0.2); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 700;">+100 積分</span>
+                </button>
+                <button class="btn-primary" style="text-align: left; padding: 0.85rem 1.25rem; display: flex; justify-content: space-between; align-items: center; background: #0ea5e9;" onclick="submitDecommission('Sold')">
+                    <span>💰 二手交易 / 出售轉讓</span>
+                    <span style="font-size: 0.85rem; background: rgba(255,255,255,0.2); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 700;">+80 積分</span>
+                </button>
+                <button class="btn-primary" style="text-align: left; padding: 0.85rem 1.25rem; display: flex; justify-content: space-between; align-items: center; background: var(--secondary);" onclick="submitDecommission('Recycled')">
+                    <span>♻️ 資源回收 / 材質再生</span>
+                    <span style="font-size: 0.85rem; background: rgba(255,255,255,0.2); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 700;">+60 積分</span>
+                </button>
+                <button class="btn-logout" style="text-align: left; padding: 0.85rem 1.25rem; display: flex; justify-content: space-between; align-items: center; border-color: rgba(239,68,68,0.4); color: #f87171;" onclick="submitDecommission('Discarded')">
+                    <span>🗑️ 垃圾報廢 / 焚化掩埋</span>
+                    <span style="font-size: 0.85rem; background: rgba(0,0,0,0.1); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 700; color: #f87171;">+10 積分</span>
+                </button>
+            </div>
+            <input type="hidden" id="decommissionItemId">
+            <button class="btn-primary" style="width: 100%; background: #4b5563; border-color: #4b5563;" onclick="closeModal('decommissionModal')">取消</button>
+        </div>
+    </div>
+
+    <script src="js/main.js?v=2026071818"></script>
+    <script>
+        // 頁面初始化載入物品
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            loadItems();
+            loadESGStats(); // 載入 ESG 儀表板數據
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>提醒通知 | 綠色循環經濟護照</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='passport.html'">
+                🌱 綠色循環經濟護照
+            </div>
+            <ul class="nav-links">
+                <li><a href="passport.html">物品收藏庫</a></li>
+                <li><a href="add-item.html">新增物品護照</a></li>
+                <li><a href="reminders.html" class="active">提醒通知</a></li>
+                <li><a href="board.html">互助募集看板</a></li>
+                <li><a href="messages.html">聯絡私訊</a></li>
+                <li><button class="btn-logout" onclick="logout()">登出</button></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <!-- 提醒看板區區 -->
+        <section class="glass-card" style="margin-top: 2rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+            <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+                <h3 style="font-size: 1.4rem; font-weight: 600; color: var(--text-main); margin: 0;" id="remindersTitle">⏰ 提醒通知</h3>
+            </div>
+
+            <div style="font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem;">
+                <p id="remindersDesc" style="color: var(--text-muted);">正在檢查您的物品狀態...</p>
+                <ul id="remindersList" style="margin-top: 1rem; padding-left: 1.5rem; color: var(--accent); font-weight: 600; line-height: 2;">
+                    <!-- JS 動態寫入提醒清單 -->
+                </ul>
+            </div>
+            
+            <div class="glass-card" id="remindersAdviceCard" style="padding: 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; border-color: rgba(245,158,11,0.2); display: none;">
+                <div id="remindersAdviceText"></div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/main.js?v=2026071816"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            loadRemindersPage(); // 加載獨立提醒通知頁面的內容
+        });
+    </script>
+</body>
+</html>

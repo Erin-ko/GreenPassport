@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>物品護照履歷 | 綠色循環經濟護照</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='passport.html'">
+                🌱 綠色循環經濟護照
+            </div>
+            <ul class="nav-links">
+                <li><a href="passport.html" class="active">物品收藏庫</a></li>
+                <li><a href="add-item.html">新增物品護照</a></li>
+                <li><a href="reminders.html">提醒通知</a></li>
+                <li><a href="board.html">互助募集看板</a></li>
+                <li><a href="messages.html">聯絡私訊</a></li>
+                <li><button class="btn-logout" onclick="logout()">登出</button></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <section class="glass-card" style="margin-top: 2rem; max-width: 700px; margin-left: auto; margin-right: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+                <h3 style="font-size: 1.4rem; font-weight: 600; color: var(--text-main); margin: 0;" id="detailName">物品護照履歷</h3>
+                <span class="item-badge" id="detailStatus" style="font-size: 0.9rem; padding: 0.25rem 0.75rem;">載入中</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;" id="detailContent">
+                <div style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                    資料載入中...
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; display: flex; gap: 1rem;">
+                <button class="btn-primary" style="width: auto; padding: 0.5rem 1.5rem;" onclick="window.location.href='passport.html'">返回收藏庫</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/main.js?v=2026071816"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            loadItemDetail(); // 加載單一物品的詳細履歷
+        });
+    </script>
+</body>
+</html>
