@@ -1196,6 +1196,20 @@ async function addComment(postId) {
     }
 }
 
+// 刪除貼文功能
+async function deletePost(postId) {
+    if (!confirm('您確定要刪除這篇貼文嗎？此操作將無法復原。')) return;
+    try {
+        await apiRequest(`/board/posts/${postId}`, {
+            method: 'DELETE'
+        });
+        alert('貼文已成功刪除！');
+        loadPosts();
+    } catch (err) {
+        alert('刪除貼文失敗: ' + err.message);
+    }
+}
+
 // 載入看板貼文
 async function loadPosts() {
     const container = document.getElementById('postsContainer');
@@ -1298,11 +1312,18 @@ function renderBoardItems() {
             ? `<span class="item-badge" style="background: rgba(2,132,199,0.12); color: #0284c7; cursor: pointer; font-size:0.8rem; padding: 0.15rem 0.5rem; border-radius: 4px; margin-left: 0.5rem; font-weight:600; border: 1px solid rgba(2,132,199,0.3);" onclick="window.location.href='messages.html?chat_with=${post.user_id}&post_id=${post.id}'">💬 私訊聯絡</span>`
             : '';
 
+        const deleteBtn = post.distance_text === '本人發布'
+            ? `<span class="item-badge" style="background: rgba(239,68,68,0.12); color: #ef4444; cursor: pointer; font-size:0.8rem; padding: 0.15rem 0.5rem; border-radius: 4px; margin-left: 0.5rem; font-weight:600; border: 1px solid rgba(239,68,68,0.3);" onclick="deletePost(${post.id})">🗑️ 刪除貼文</span>`
+            : '';
+
         return `
             <div class="glass-card post-card" style="margin-bottom: 1.5rem;">
                 <div class="post-header" style="margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
                     <span class="post-author" style="font-weight:600; color: var(--text-main);">👤 ${post.username} ${typeBadge} ${chatBadge}</span>
-                    <span class="post-dist" style="font-size:0.8rem; background: rgba(16,185,129,0.1); color: var(--secondary); padding: 0.2rem 0.5rem; border-radius: 4px;">📍 ${post.distance_text || '位置不詳'}</span>
+                    <div style="display: flex; align-items: center;">
+                        <span class="post-dist" style="font-size:0.8rem; background: rgba(16,185,129,0.1); color: var(--secondary); padding: 0.2rem 0.5rem; border-radius: 4px;">📍 ${post.distance_text || '位置不詳'}</span>
+                        ${deleteBtn}
+                    </div>
                 </div>
                 
                 <div style="font-weight: 700; font-size: 1.15rem; margin-bottom: 0.75rem; color: var(--text-main)">

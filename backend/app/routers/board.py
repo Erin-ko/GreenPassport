@@ -149,3 +149,16 @@ def create_comment(post_id: int, comment_in: CommentCreate, db: Session = Depend
         "content": db_comment.content,
         "created_at": db_comment.created_at
     }
+
+@router.delete("/posts/{post_id}")
+def delete_post(post_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    post = db.query(CommunityPost).filter(CommunityPost.id == post_id).first()
+    if not post:
+        raise HTTPException(status_code=404, detail="找不到該貼文")
+    if post.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="您無權刪除此貼文")
+    
+    db.delete(post)
+    db.commit()
+    return {"detail": "貼文已刪除"}
+

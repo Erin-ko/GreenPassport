@@ -354,12 +354,14 @@ main {
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(4px);
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     opacity: 0;
     pointer-events: none;
     transition: var(--transition);
     z-index: 1000;
+    overflow-y: auto;
+    padding: 3rem 0;
 }
 
 .modal.active {
