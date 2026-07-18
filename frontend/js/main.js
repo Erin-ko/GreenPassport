@@ -1313,7 +1313,7 @@ function renderBoardItems() {
             : '';
 
         const deleteBtn = post.distance_text === '本人發布'
-            ? `<span class="item-badge" style="background: rgba(239,68,68,0.12); color: #ef4444; cursor: pointer; font-size:0.8rem; padding: 0.15rem 0.5rem; border-radius: 4px; margin-left: 0.5rem; font-weight:600; border: 1px solid rgba(239,68,68,0.3);" onclick="deletePost(${post.id})">🗑️ 刪除貼文</span>`
+            ? `<span class="item-badge" style="background: rgba(239,68,68,0.12); color: #ef4444; cursor: pointer; font-size:0.8rem; padding: 0.15rem 0.5rem; border-radius: 4px; margin-left: 0.5rem; font-weight:600; border: 1px solid rgba(239,68,68,0.3);" onclick="deletePost(${post.id})">刪除貼文</span>`
             : '';
 
         return `
@@ -1321,7 +1321,7 @@ function renderBoardItems() {
                 <div class="post-header" style="margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
                     <span class="post-author" style="font-weight:600; color: var(--text-main);">👤 ${post.username} ${typeBadge} ${chatBadge}</span>
                     <div style="display: flex; align-items: center;">
-                        <span class="post-dist" style="font-size:0.8rem; background: rgba(16,185,129,0.1); color: var(--secondary); padding: 0.2rem 0.5rem; border-radius: 4px;">📍 ${post.distance_text || '位置不詳'}</span>
+                        <span class="post-dist" style="font-size:0.8rem; background: rgba(16,185,129,0.1); color: var(--secondary); padding: 0.2rem 0.5rem; border-radius: 4px;">${post.distance_text === '本人發布' ? '本人發布' : '📍 ' + (post.distance_text || '位置不詳')}</span>
                         ${deleteBtn}
                     </div>
                 </div>
