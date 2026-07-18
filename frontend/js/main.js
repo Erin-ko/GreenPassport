@@ -344,7 +344,7 @@ function renderFilteredItems() {
     if (filtered.length === 0) {
         grid.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--text-muted);">
-                🦕 此分類下沒有任何物品，點選導覽列「新增物品護照」開始記錄吧！
+                此分類下沒有任何物品，點選導覽列「新增物品護照」開始記錄吧！
             </div>`;
         return;
     }
@@ -827,7 +827,7 @@ async function loadRemindersPage() {
     try {
         const reminders = await apiRequest('/items/reminders');
         if (reminders.length === 0) {
-            if (descEl) descEl.textContent = '🎉 太棒了！目前沒有任何即將到期或需要保養的物品。';
+            if (descEl) descEl.textContent = '目前沒有任何即將到期或需要保養的物品';
             list.innerHTML = '';
             if (titleEl) titleEl.textContent = '⏰ 提醒通知';
             if (adviceCard) adviceCard.style.display = 'none';
@@ -1240,7 +1240,7 @@ function renderBoardItems() {
     if (filtered.length === 0) {
         container.innerHTML = `
             <div style="text-align: center; padding: 4rem; color: var(--text-muted);">
-                🔍 沒有找到符合條件的貼文。您也可以發布公告喔！
+                沒有找到符合條件的貼文。您也可以發布公告喔！
             </div>`;
         return;
     }
