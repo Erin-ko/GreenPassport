@@ -4,6 +4,11 @@ from fastapi.staticfiles import StaticFiles
 from app.core.config import settings
 
 from app.routers import auth, items, board, messages
+from app.core.database import engine
+from app.models import Base
+
+# 啟動時自動建立資料庫表結構 (相容全新環境與 Render 部署，防止 relation not found 500 錯誤)
+Base.metadata.create_all(bind=engine)
 
 from starlette.responses import Response
 
