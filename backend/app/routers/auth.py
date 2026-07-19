@@ -17,11 +17,19 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def register(user_in: UserCreate, db: Session = Depends(get_db)):
     # 檢查 Email 是否已被註冊
-    db_user = db.query(User).filter(User.email == user_in.email).first()
-    if db_user:
+    db_email = db.query(User).filter(User.email == user_in.email).first()
+    if db_email:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="該電子信箱已被註冊"
+        )
+    
+    # 檢查使用者名稱是否已被註冊
+    db_username = db.query(User).filter(User.username == user_in.username).first()
+    if db_username:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="此使用者名稱已被使用，請更換一個名稱"
         )
     
     # 建立使用者
