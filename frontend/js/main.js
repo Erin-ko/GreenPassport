@@ -77,7 +77,7 @@ const loginForm = document.getElementById('loginForm');
 if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const email = document.getElementById('loginEmail').value;
+        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
         const password = document.getElementById('loginPassword').value;
         const errorDiv = document.getElementById('loginError');
 
@@ -141,10 +141,10 @@ if (registerForm) {
 
     registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const username = document.getElementById('regUsername').value;
-        const email = document.getElementById('regEmail').value;
+        const username = document.getElementById('regUsername').value.trim();
+        const email = document.getElementById('regEmail').value.trim().toLowerCase();
         const password = document.getElementById('regPassword').value;
-        const location = document.getElementById('regLocation').value;
+        const location = document.getElementById('regLocation').value.trim();
         const errorDiv = document.getElementById('registerError');
 
         try {
