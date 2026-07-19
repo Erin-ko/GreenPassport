@@ -214,43 +214,51 @@ sequenceDiagram
 
 ## 5. 一般使用者操作流程圖 (User Operations Flow)
 
-本章節提供適合一般使用者（非技術人員）理解的實際操作流程，使用直觀的步驟呈現。
-
-### 5.1 家庭物品的「永續生命週期管理」流程
+本章節提供適合一般使用者（非技術人員）理解的整合性操作流程。本圖展示了「資產擁有者」與「物資需求者」如何透過「社區共享媒合牆」產生交集，完成資源流轉並共同實踐綠色生活的完整閉環。
 
 ```mermaid
 graph TD
-    Start(["購買新物品 <br/> (如：沙發、吸塵器、單車)"]) --> Register["登入系統並登記物品<br/>(輸入名稱與材質，可按 AI 輔助填寫)"]
-    Register --> Use["日常使用物品"]
-    Use --> Alert{"收到系統保養提醒？"}
-    
-    Alert -- 是 --> Maintain["進行保養或送修<br/>(並在系統記錄一筆維護)"]
-    Maintain --> Health["物品健康度回復<br/>(延長壽命並省下新品製造碳排放)"]
-    Health --> Use
-    
-    Alert -- 否 (想要汰換或閒置) --> Decision{"物品如何處置？"}
-    
-    Decision -->|還可以正常使用| Share["至『社區共享』出借或贈送"]
-    Decision -->|需要尋找專業回收/轉售| Recover["根據系統建議二手賣出或捐贈"]
-    
-    Share --> Reward["獲得減碳成就榮譽<br/>(在減碳報告看見減碳效益換算)"]
-    Recover --> Reward
-    Reward --> End([實踐永續綠色生活])
-```
+    %% 角色定義與起點
+    subgraph OwnerFlow ["【資產擁有者流程】"]
+        Start1(["購買新物品 <br/> 如沙發、單車"]) --> Register["登入系統登記物品<br/>可由 AI 輔助填寫"]
+        Register --> Use["日常使用物品"]
+        Use --> Alert{"收到保養提醒？"}
+        
+        Alert -- 是 --> Maintain["進行保養或送修<br/>在系統記錄維護"]
+        Maintain --> Health["物品健康度回復<br/>延長壽命且省下新品碳排"]
+        Health --> Use
+        
+        Alert -- 否 (想要汰換或閒置) --> Decision{"物品如何處置？"}
+        Decision -->|需要專業回收/轉售| Recover["根據建議二手賣出或捐贈"]
+    end
 
-### 5.2 社區互助「尋找零件與借用物品」流程
+    subgraph BorrowerFlow ["【零件/工具需求者流程】"]
+        Start2(["物品損壞少零件或需要工具<br/>如少螺絲、需要電鑽"]) --> Action{"選擇如何取得？"}
+        Action -->|直接去賣場購買一包| Buy["增加花費且造成材料浪費"]
+        Action -->|尋求社區協助| Post["在社區共享發布募集貼文<br/>系統會模糊定位保護隱私"]
+    end
 
-```mermaid
-graph TD
-    Start2(["物品少零件或需要特定工具 <br/> (例如：椅子少顆螺絲、需要電鑽)"]) --> Action{"選擇如何取得？"}
-    Action -->|去大賣場購買一整包| Buy["增加花費且可能造成材料浪費"]
-    Action -->|使用社區互助| Post["在『社區共享』發布募集貼文<br/>(系統會模糊定位以保護您的隱私)"]
+    %% 共同交會點：社區共享平台
+    Decision -->|還可以正常使用| ShareBoard[["🤝 社區共享媒合牆"]]
+    Post --> ShareBoard
     
-    Post --> Nearby["附近的鄰居看到募集資訊<br/>(發現手邊剛好有閒置零件或工具)"]
-    Nearby --> Chat["雙方在系統內開啟『聊聊』<br/>(確認面交時間與地點)"]
-    Chat --> Handover["順利拿到零件或借到工具"]
+    %% 媒合與結案流
+    ShareBoard --> Match["雙方看到合適的貼文與物件"]
+    Match --> Chat["在系統內開啟『聊聊』<br/>確認面交時間與地點"]
+    Chat --> Handover["完成零件交割或物品借用"]
     Handover --> Repair["修復物品或完成工作"]
-    Repair --> Confirm["點擊『確認結案』<br/>(標記物品狀態並完成流轉)"]
-    Confirm --> Reward2["雙方減碳榮譽值上升<br/>(成功讓微型資源活化)"]
-    Reward2 --> End2([鄰里互助綠色生活圈])
+    Repair --> Confirm["點擊『確認結案』<br/>完成流轉狀態變更"]
+    
+    %% 共同終點
+    Confirm --> Reward["雙方獲得減碳榮譽值與成就"]
+    Recover --> Reward
+    Reward --> End([實踐永續鄰里互助生活圈])
+
+    style Start1 fill:#f9f,stroke:#333,stroke-width:1px
+    style Start2 fill:#f9f,stroke:#333,stroke-width:1px
+    style ShareBoard fill:#bbf,stroke:#333,stroke-width:2px
+    style End fill:#9f9,stroke:#333,stroke-width:2px
+    style Alert fill:#ff9,stroke:#333,stroke-width:1px
+    style Decision fill:#ff9,stroke:#333,stroke-width:1px
+    style Action fill:#ff9,stroke:#333,stroke-width:1px
 ```
